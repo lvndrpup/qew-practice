@@ -1,5 +1,4 @@
 const CM_PER_INCH: f64 = 2.54;
-const SEAM_ALLOWANCE_CM: f64 = 1.0;
 
 /// Converts centimetres to inches.
 pub fn cm_to_inch(cm: f64) -> f64 {
@@ -16,16 +15,19 @@ pub fn parse_height_cm(text: &str) -> Option<f64> {
     } else {
         (text, |x| x)
     };
-    number
-        .parse::<f64>()
-        .ok()
-        .filter(|n| n.is_finite() && *n > 0.0)
-        .map(to_cm)
+    positive(number).map(to_cm)
 }
 
-/// Fabric (width_cm, length_cm) for a square pillow whose side is `height_cm`.
-pub fn pillow_fabric(height_cm: f64) -> (f64, f64) {
-    let cut_side = height_cm + 2.0 * SEAM_ALLOWANCE_CM;
+/// Reads a finite number above 0; `None` for anything else.
+pub fn positive(text: &str) -> Option<f64> {
+    text.parse::<f64>()
+        .ok()
+        .filter(|n| n.is_finite() && *n > 0.0)
+}
+
+/// Fabric (width_cm, length_cm) for a square pillow whose side is `height_cm`, with `seam_cm` on every edge.
+pub fn pillow_fabric(height_cm: f64, seam_cm: f64) -> (f64, f64) {
+    let cut_side = height_cm + 2.0 * seam_cm;
     // Two squares cut side by side.
     (cut_side, 2.0 * cut_side)
 }
@@ -43,6 +45,6 @@ mod tests {
     // Catches a missing seam allowance or a single square instead of two.
     #[test]
     fn thirty_cm_pillow_needs_32_by_64() {
-        assert_eq!(pillow_fabric(30.0), (32.0, 64.0));
+        assert_eq!(pillow_fabric(30.0, 1.0), (32.0, 64.0));
     }
 }

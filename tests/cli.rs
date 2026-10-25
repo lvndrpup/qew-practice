@@ -69,3 +69,25 @@ fn three_hundred_mm_matches_30_cm() {
     assert!(mm.status.success());
     assert_eq!(mm.stdout, run(&["30"]).stdout);
 }
+
+// Catches the --seam value being ignored or applied to only one edge.
+#[test]
+fn seam_flag_sets_the_allowance() {
+    let text = String::from_utf8(run(&["--seam", "1.5", "30"]).stdout).unwrap();
+    assert_eq!(text, "30 cm = 11.81 in\nPillow fabric: 33 x 66 cm\n");
+}
+
+// Catches a bad seam slipping through as a pattern with no or negative allowance.
+#[test]
+fn bad_seam_fails_with_exit_2() {
+    for args in [
+        &["--seam", "0", "30"][..],
+        &["--seam", "-1", "30"],
+        &["--seam", "x", "30"],
+        &["30", "--seam"],
+    ] {
+        let out = run(args);
+        assert_eq!(out.status.code(), Some(2), "args {args:?}");
+        assert!(out.stdout.is_empty(), "args {args:?}");
+    }
+}

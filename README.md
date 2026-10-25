@@ -10,6 +10,8 @@ Pillow fabric: 32 x 64 cm
 
 Add `in` for inches or `mm` for millimetres: `cargo run -- 12in`, `cargo run -- 300mm`.
 
+Change the seam allowance (default 1 cm) with `--seam`: `cargo run -- 30 --seam 1.5`.
+
 A height that is missing, not a number, zero or negative stops with a usage message and exit code 2.
 
 ## Tests
