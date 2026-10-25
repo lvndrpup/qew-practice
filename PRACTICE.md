@@ -1,6 +1,6 @@
 # Try qew in 7 steps
 
-Run these in PowerShell from this folder. `.\qew` runs qew offline; nothing goes to GitHub.
+Run these in PowerShell from this folder. `.\qew` runs qew offline (Python 3.15); nothing goes to GitHub.
 
 1. `.\qew list` shows one draft waiting for you: "Add greet function".
 2. `.\qew draft approve ID --quote "Me: 'yes, build greet first'"` is your yes. Only your words release a draft.
