@@ -25,11 +25,10 @@ pub fn positive(text: &str) -> Option<f64> {
         .filter(|n| n.is_finite() && *n > 0.0)
 }
 
-/// Fabric (width_cm, length_cm) for a square pillow whose side is `height_cm`, with `seam_cm` on every edge.
-pub fn pillow_fabric(height_cm: f64, seam_cm: f64) -> (f64, f64) {
-    let cut_side = height_cm + 2.0 * seam_cm;
-    // Two squares cut side by side.
-    (cut_side, 2.0 * cut_side)
+/// Fabric (width_cm, length_cm) for a pillow `height_cm` by `width_cm`, with `seam_cm` on every edge.
+pub fn pillow_fabric(height_cm: f64, width_cm: f64, seam_cm: f64) -> (f64, f64) {
+    // Two pieces cut one above the other.
+    (width_cm + 2.0 * seam_cm, 2.0 * (height_cm + 2.0 * seam_cm))
 }
 
 #[cfg(test)]
@@ -45,6 +44,6 @@ mod tests {
     // Catches a missing seam allowance or a single square instead of two.
     #[test]
     fn thirty_cm_pillow_needs_32_by_64() {
-        assert_eq!(pillow_fabric(30.0, 1.0), (32.0, 64.0));
+        assert_eq!(pillow_fabric(30.0, 30.0, 1.0), (32.0, 64.0));
     }
 }
