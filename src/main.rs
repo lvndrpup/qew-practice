@@ -2,7 +2,8 @@ use std::process::ExitCode;
 
 use plush::{cm_to_inch, parse_height_cm, pillow_fabric};
 
-const USAGE: &str = "usage: plush HEIGHT_CM (a number above 0; add `in` for inches, like 12in)";
+const USAGE: &str =
+    "usage: plush HEIGHT_CM (a number above 0; add `in` or `mm`, like 12in or 300mm)";
 const EXAMPLE: &str = "example: plush 30";
 
 fn main() -> ExitCode {
