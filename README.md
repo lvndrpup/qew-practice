@@ -6,6 +6,7 @@ Type a plush height in cm. It prints the height in inches and the fabric you nee
 $ cargo run -- 30
 30 cm = 11.81 in
 Pillow fabric: 32 x 64 cm
+Buy: 0.64 m of 110 cm wide fabric
 Stuffing: about 135 g
 ```
 
