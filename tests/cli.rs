@@ -10,7 +10,7 @@ fn thirty_cm_prints_inches_and_fabric() {
     assert!(out.status.success());
     assert_eq!(
         String::from_utf8(out.stdout).unwrap(),
-        "30 cm = 11.81 in\nPillow fabric: 32 x 64 cm\nStuffing: about 135 g\n"
+        "30 cm = 11.81 in\nPillow fabric: 32 x 64 cm\nBuy: 0.64 m of 110 cm wide fabric\nStuffing: about 135 g\n"
     );
 }
 
@@ -58,7 +58,7 @@ fn sizes_print_without_float_noise() {
     let text = String::from_utf8(run(&["30.48"]).stdout).unwrap();
     assert_eq!(
         text,
-        "30.48 cm = 12.00 in\nPillow fabric: 32.48 x 64.96 cm\nStuffing: about 142 g\n"
+        "30.48 cm = 12.00 in\nPillow fabric: 32.48 x 64.96 cm\nBuy: 0.65 m of 110 cm wide fabric\nStuffing: about 142 g\n"
     );
 }
 
@@ -76,7 +76,7 @@ fn seam_flag_sets_the_allowance() {
     let text = String::from_utf8(run(&["--seam", "1.5", "30"]).stdout).unwrap();
     assert_eq!(
         text,
-        "30 cm = 11.81 in\nPillow fabric: 33 x 66 cm\nStuffing: about 135 g\n"
+        "30 cm = 11.81 in\nPillow fabric: 33 x 66 cm\nBuy: 0.66 m of 110 cm wide fabric\nStuffing: about 135 g\n"
     );
 }
 
@@ -99,7 +99,10 @@ fn bad_seam_fails_with_exit_2() {
 #[test]
 fn width_flag_makes_a_rectangle() {
     let text = String::from_utf8(run(&["30", "--width", "40"]).stdout).unwrap();
-    assert_eq!(text, "30 cm = 11.81 in\nPillow fabric: 42 x 64 cm\n");
+    assert_eq!(
+        text,
+        "30 cm = 11.81 in\nPillow fabric: 42 x 64 cm\nBuy: 0.64 m of 110 cm wide fabric\n"
+    );
 }
 
 // Catches a bad width slipping through as a pattern.
@@ -122,7 +125,7 @@ fn round_flag_prints_cutting_radius() {
     let text = String::from_utf8(run(&["30", "--round"]).stdout).unwrap();
     assert_eq!(
         text,
-        "30 cm = 11.81 in\nPillow fabric: 32 x 64 cm\nCutting radius: 16 cm\n"
+        "30 cm = 11.81 in\nPillow fabric: 32 x 64 cm\nBuy: 0.64 m of 110 cm wide fabric\nCutting radius: 16 cm\n"
     );
 }
 
@@ -141,4 +144,17 @@ fn stuffing_only_for_square_pillows() {
         let text = String::from_utf8(run(args).stdout).unwrap();
         assert!(!text.contains("Stuffing"), "args {args:?}: {text}");
     }
+}
+
+// Catches a piece wider than the fabric getting a length that cannot be cut.
+#[test]
+fn too_wide_for_the_fabric_says_so() {
+    let text = String::from_utf8(run(&["30", "--width", "120"]).stdout).unwrap();
+    assert!(
+        text.contains(
+            "Buy: too wide for 110 cm fabric (needs 122 cm)
+"
+        ),
+        "{text}"
+    );
 }
