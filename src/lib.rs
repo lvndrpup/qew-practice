@@ -1,4 +1,5 @@
 const CM_PER_INCH: f64 = 2.54;
+const SEAM_ALLOWANCE_CM: f64 = 1.0;
 
 /// Converts centimetres to inches.
 pub fn cm_to_inch(cm: f64) -> f64 {
@@ -7,7 +8,9 @@ pub fn cm_to_inch(cm: f64) -> f64 {
 
 /// Fabric (width_cm, length_cm) for a square pillow whose side is `height_cm`.
 pub fn pillow_fabric(height_cm: f64) -> (f64, f64) {
-    todo!()
+    let cut_side = height_cm + 2.0 * SEAM_ALLOWANCE_CM;
+    // Two squares cut side by side.
+    (cut_side, 2.0 * cut_side)
 }
 
 #[cfg(test)]
