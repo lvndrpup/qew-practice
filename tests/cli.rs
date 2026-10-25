@@ -91,3 +91,24 @@ fn bad_seam_fails_with_exit_2() {
         assert!(out.stdout.is_empty(), "args {args:?}");
     }
 }
+
+// Catches width and height swapped, or the seam left off the width.
+#[test]
+fn width_flag_makes_a_rectangle() {
+    let text = String::from_utf8(run(&["30", "--width", "40"]).stdout).unwrap();
+    assert_eq!(text, "30 cm = 11.81 in\nPillow fabric: 42 x 64 cm\n");
+}
+
+// Catches a bad width slipping through as a pattern.
+#[test]
+fn bad_width_fails_with_exit_2() {
+    for args in [
+        &["30", "--width", "0"][..],
+        &["30", "--width", "x"],
+        &["30", "--width"],
+    ] {
+        let out = run(args);
+        assert_eq!(out.status.code(), Some(2), "args {args:?}");
+        assert!(out.stdout.is_empty(), "args {args:?}");
+    }
+}
