@@ -1,6 +1,6 @@
 use std::process::ExitCode;
 
-use plush::{cm_to_inch, cutting_radius, parse_height_cm, pillow_fabric, positive};
+use plush::{cm_to_inch, cutting_radius, parse_height_cm, pillow_fabric, positive, stuffing_grams};
 
 const USAGE: &str = "usage: plush HEIGHT_CM [--width CM | --round] [--seam CM] (a number above 0; add `in` or `mm`, like 12in or 300mm)";
 const EXAMPLE: &str = "example: plush 30";
@@ -28,6 +28,9 @@ fn main() -> ExitCode {
     let (width, length) = pillow_fabric(o.height_cm, pillow_width, o.seam_cm);
     println!("{} cm = {:.2} in", cm(o.height_cm), cm_to_inch(o.height_cm));
     println!("Pillow fabric: {} x {} cm", cm(width), cm(length));
+    if !o.round && o.width_cm.is_none() {
+        println!("Stuffing: about {} g", stuffing_grams(o.height_cm));
+    }
     if o.round {
         let radius = cutting_radius(o.height_cm, o.seam_cm);
         println!("Cutting radius: {} cm", cm(radius));
