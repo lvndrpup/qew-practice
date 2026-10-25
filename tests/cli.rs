@@ -43,3 +43,11 @@ fn help_prints_usage_and_example() {
         assert!(text.contains("plush 30"), "{flag}: {text}");
     }
 }
+
+// Catches inch input being read as cm, or converted the wrong way.
+#[test]
+fn twelve_inches_matches_30_48_cm() {
+    let inches = run(&["12in"]);
+    assert!(inches.status.success());
+    assert_eq!(inches.stdout, run(&["30.48"]).stdout);
+}
