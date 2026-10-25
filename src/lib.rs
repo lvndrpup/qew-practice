@@ -6,6 +6,19 @@ pub fn cm_to_inch(cm: f64) -> f64 {
     cm / CM_PER_INCH
 }
 
+/// Reads a height like `30` (cm) or `12in`; `None` unless it is a finite number above 0.
+pub fn parse_height_cm(text: &str) -> Option<f64> {
+    let (number, cm_per_unit) = match text.strip_suffix("in") {
+        Some(inches) => (inches, CM_PER_INCH),
+        None => (text, 1.0),
+    };
+    number
+        .parse::<f64>()
+        .ok()
+        .filter(|n| n.is_finite() && *n > 0.0)
+        .map(|n| n * cm_per_unit)
+}
+
 /// Fabric (width_cm, length_cm) for a square pillow whose side is `height_cm`.
 pub fn pillow_fabric(height_cm: f64) -> (f64, f64) {
     let cut_side = height_cm + 2.0 * SEAM_ALLOWANCE_CM;

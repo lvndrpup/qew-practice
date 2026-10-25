@@ -1,8 +1,8 @@
 use std::process::ExitCode;
 
-use plush::{cm_to_inch, pillow_fabric};
+use plush::{cm_to_inch, parse_height_cm, pillow_fabric};
 
-const USAGE: &str = "usage: plush HEIGHT_CM (a number above 0)";
+const USAGE: &str = "usage: plush HEIGHT_CM (a number above 0; add `in` for inches, like 12in)";
 const EXAMPLE: &str = "example: plush 30";
 
 fn main() -> ExitCode {
@@ -11,10 +11,7 @@ fn main() -> ExitCode {
         println!("{USAGE}\n{EXAMPLE}");
         return ExitCode::SUCCESS;
     }
-    let Some(height) = arg
-        .and_then(|a| a.parse::<f64>().ok())
-        .filter(|h| h.is_finite() && *h > 0.0)
-    else {
+    let Some(height) = arg.as_deref().and_then(parse_height_cm) else {
         eprintln!("{USAGE}");
         return ExitCode::from(2);
     };
