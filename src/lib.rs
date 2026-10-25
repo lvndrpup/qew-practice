@@ -1,4 +1,6 @@
 const CM_PER_INCH: f64 = 2.54;
+// Polyester fibrefill packed for a soft pillow.
+const STUFFING_G_PER_CM3: f64 = 0.02;
 
 /// Converts centimetres to inches.
 pub fn cm_to_inch(cm: f64) -> f64 {
@@ -36,6 +38,12 @@ pub fn cutting_radius(diameter_cm: f64, seam_cm: f64) -> f64 {
     diameter_cm / 2.0 + seam_cm
 }
 
+/// Grams of stuffing for a square pillow `height_cm` across, rounded to whole grams.
+pub fn stuffing_grams(height_cm: f64) -> f64 {
+    // A filled square pillow is about a quarter of the cube of its side.
+    (height_cm.powi(3) / 4.0 * STUFFING_G_PER_CM3).round()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -56,5 +64,11 @@ mod tests {
     #[test]
     fn thirty_cm_circle_cuts_at_16_cm() {
         assert_eq!(cutting_radius(30.0, 1.0), 16.0);
+    }
+
+    // Catches a wrong volume rule or density.
+    #[test]
+    fn thirty_cm_square_needs_135_g() {
+        assert_eq!(stuffing_grams(30.0), 135.0);
     }
 }
