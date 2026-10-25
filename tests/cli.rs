@@ -112,3 +112,21 @@ fn bad_width_fails_with_exit_2() {
         assert!(out.stdout.is_empty(), "args {args:?}");
     }
 }
+
+// Catches a round pillow cut without seam allowance on its radius.
+#[test]
+fn round_flag_prints_cutting_radius() {
+    let text = String::from_utf8(run(&["30", "--round"]).stdout).unwrap();
+    assert_eq!(
+        text,
+        "30 cm = 11.81 in\nPillow fabric: 32 x 64 cm\nCutting radius: 16 cm\n"
+    );
+}
+
+// Catches a circle that is also asked to have a width: that has no single answer.
+#[test]
+fn round_with_width_fails_with_exit_2() {
+    let out = run(&["30", "--round", "--width", "40"]);
+    assert_eq!(out.status.code(), Some(2));
+    assert!(out.stdout.is_empty());
+}

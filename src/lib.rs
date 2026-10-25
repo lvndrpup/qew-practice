@@ -31,6 +31,11 @@ pub fn pillow_fabric(height_cm: f64, width_cm: f64, seam_cm: f64) -> (f64, f64) 
     (width_cm + 2.0 * seam_cm, 2.0 * (height_cm + 2.0 * seam_cm))
 }
 
+/// Radius to cut each circle of a round pillow `diameter_cm` across, with `seam_cm` added.
+pub fn cutting_radius(diameter_cm: f64, seam_cm: f64) -> f64 {
+    diameter_cm / 2.0 + seam_cm
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -45,5 +50,11 @@ mod tests {
     #[test]
     fn thirty_cm_pillow_needs_32_by_64() {
         assert_eq!(pillow_fabric(30.0, 30.0, 1.0), (32.0, 64.0));
+    }
+
+    // Catches the seam added to the diameter instead of the radius.
+    #[test]
+    fn thirty_cm_circle_cuts_at_16_cm() {
+        assert_eq!(cutting_radius(30.0, 1.0), 16.0);
     }
 }

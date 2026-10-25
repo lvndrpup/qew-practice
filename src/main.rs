@@ -1,8 +1,8 @@
 use std::process::ExitCode;
 
-use plush::{cm_to_inch, parse_height_cm, pillow_fabric, positive};
+use plush::{cm_to_inch, cutting_radius, parse_height_cm, pillow_fabric, positive};
 
-const USAGE: &str = "usage: plush HEIGHT_CM [--width CM] [--seam CM] (a number above 0; add `in` or `mm`, like 12in or 300mm)";
+const USAGE: &str = "usage: plush HEIGHT_CM [--width CM | --round] [--seam CM] (a number above 0; add `in` or `mm`, like 12in or 300mm)";
 const EXAMPLE: &str = "example: plush 30";
 const DEFAULT_SEAM_CM: f64 = 1.0;
 
@@ -10,6 +10,7 @@ struct Options {
     height_cm: f64,
     /// `None` makes a square pillow.
     width_cm: Option<f64>,
+    round: bool,
     seam_cm: f64,
 }
 
@@ -27,6 +28,10 @@ fn main() -> ExitCode {
     let (width, length) = pillow_fabric(o.height_cm, pillow_width, o.seam_cm);
     println!("{} cm = {:.2} in", cm(o.height_cm), cm_to_inch(o.height_cm));
     println!("Pillow fabric: {} x {} cm", cm(width), cm(length));
+    if o.round {
+        let radius = cutting_radius(o.height_cm, o.seam_cm);
+        println!("Cutting radius: {} cm", cm(radius));
+    }
     ExitCode::SUCCESS
 }
 
@@ -34,18 +39,24 @@ fn main() -> ExitCode {
 fn parse_args(mut args: impl Iterator<Item = String>) -> Option<Options> {
     let mut height = None;
     let mut width = None;
+    let mut round = false;
     let mut seam = DEFAULT_SEAM_CM;
     while let Some(arg) = args.next() {
         match arg.as_str() {
             "--seam" => seam = positive(&args.next()?)?,
             "--width" => width = Some(parse_height_cm(&args.next()?)?),
+            "--round" => round = true,
             _ if height.is_none() => height = Some(parse_height_cm(&arg)?),
             _ => return None,
         }
     }
+    if round && width.is_some() {
+        return None;
+    }
     Some(Options {
         height_cm: height?,
         width_cm: width,
+        round,
         seam_cm: seam,
     })
 }
