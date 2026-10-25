@@ -1,6 +1,8 @@
+const CM_PER_INCH: f64 = 2.54;
+
 /// Converts centimetres to inches.
 pub fn cm_to_inch(cm: f64) -> f64 {
-    todo!()
+    cm / CM_PER_INCH
 }
 
 #[cfg(test)]
