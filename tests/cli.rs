@@ -10,7 +10,7 @@ fn thirty_cm_prints_inches_and_fabric() {
     assert!(out.status.success());
     assert_eq!(
         String::from_utf8(out.stdout).unwrap(),
-        "30 cm = 11.81 in\nPillow fabric: 32 x 64 cm\n"
+        "30 cm = 11.81 in\nPillow fabric: 32 x 64 cm\nStuffing: about 135 g\n"
     );
 }
 
@@ -58,7 +58,7 @@ fn sizes_print_without_float_noise() {
     let text = String::from_utf8(run(&["30.48"]).stdout).unwrap();
     assert_eq!(
         text,
-        "30.48 cm = 12.00 in\nPillow fabric: 32.48 x 64.96 cm\n"
+        "30.48 cm = 12.00 in\nPillow fabric: 32.48 x 64.96 cm\nStuffing: about 142 g\n"
     );
 }
 
@@ -74,7 +74,10 @@ fn three_hundred_mm_matches_30_cm() {
 #[test]
 fn seam_flag_sets_the_allowance() {
     let text = String::from_utf8(run(&["--seam", "1.5", "30"]).stdout).unwrap();
-    assert_eq!(text, "30 cm = 11.81 in\nPillow fabric: 33 x 66 cm\n");
+    assert_eq!(
+        text,
+        "30 cm = 11.81 in\nPillow fabric: 33 x 66 cm\nStuffing: about 135 g\n"
+    );
 }
 
 // Catches a bad seam slipping through as a pattern with no or negative allowance.
@@ -129,4 +132,13 @@ fn round_with_width_fails_with_exit_2() {
     let out = run(&["30", "--round", "--width", "40"]);
     assert_eq!(out.status.code(), Some(2));
     assert!(out.stdout.is_empty());
+}
+
+// Catches stuffing printed for shapes the h*h*h/4 estimate does not fit.
+#[test]
+fn stuffing_only_for_square_pillows() {
+    for args in [&["30", "--width", "40"][..], &["30", "--round"]] {
+        let text = String::from_utf8(run(args).stdout).unwrap();
+        assert!(!text.contains("Stuffing"), "args {args:?}: {text}");
+    }
 }
