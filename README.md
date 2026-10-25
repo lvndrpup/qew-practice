@@ -18,6 +18,8 @@ Make a rectangle pillow with `--width`: `cargo run -- 30 --width 40`.
 
 Make a round pillow with `--round`: it also prints the radius to cut each circle at.
 
+Give several heights to get one block each: `cargo run -- 20 30 40`.
+
 A height that is missing, not a number, zero or negative stops with a usage message and exit code 2.
 
 ## Tests
