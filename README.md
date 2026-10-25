@@ -1,3 +1,21 @@
-# qew practice
+# Plush size helper
 
-Tiny toy repo to try qew.
+Type a plush height in cm. It prints the height in inches and the fabric you need for a simple square pillow of that size: two squares cut side by side, with 1 cm seam allowance on every edge.
+
+```
+$ cargo run -- 30
+30 cm = 11.81 in
+Pillow fabric: 32 x 64 cm
+```
+
+A height that is missing, not a number, zero or negative stops with a usage message and exit code 2.
+
+## Tests
+
+```
+cargo test
+```
+
+## How this repo is run
+
+This is a practice repo for [qew](PRACTICE.md), a work ledger: every change starts as a qew job and lands through a pull request.
