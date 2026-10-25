@@ -8,6 +8,8 @@ $ cargo run -- 30
 Pillow fabric: 32 x 64 cm
 ```
 
+Add `in` to give the height in inches: `cargo run -- 12in`.
+
 A height that is missing, not a number, zero or negative stops with a usage message and exit code 2.
 
 ## Tests

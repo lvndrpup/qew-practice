@@ -43,3 +43,21 @@ fn help_prints_usage_and_example() {
         assert!(text.contains("plush 30"), "{flag}: {text}");
     }
 }
+
+// Catches inch input being read as cm, or converted the wrong way.
+#[test]
+fn twelve_inches_matches_30_48_cm() {
+    let inches = run(&["12in"]);
+    assert!(inches.status.success());
+    assert_eq!(inches.stdout, run(&["30.48"]).stdout);
+}
+
+// Catches float noise like 32.480000000000004 in the printed sizes.
+#[test]
+fn sizes_print_without_float_noise() {
+    let text = String::from_utf8(run(&["30.48"]).stdout).unwrap();
+    assert_eq!(
+        text,
+        "30.48 cm = 12.00 in\nPillow fabric: 32.48 x 64.96 cm\n"
+    );
+}
