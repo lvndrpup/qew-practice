@@ -158,3 +158,19 @@ fn too_wide_for_the_fabric_says_so() {
         "{text}"
     );
 }
+
+// Catches later heights being dropped or blocks running together.
+#[test]
+fn several_heights_print_one_block_each() {
+    let one = |h: &str| String::from_utf8(run(&[h]).stdout).unwrap();
+    let both = String::from_utf8(run(&["20", "30", "--seam", "1"]).stdout).unwrap();
+    assert_eq!(both, format!("{}\n{}", one("20"), one("30")));
+}
+
+// Catches a bad height after good ones printing half a result.
+#[test]
+fn one_bad_height_fails_the_whole_run() {
+    let out = run(&["20", "x", "30"]);
+    assert_eq!(out.status.code(), Some(2));
+    assert!(out.stdout.is_empty());
+}
