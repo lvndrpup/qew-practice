@@ -24,7 +24,7 @@ fn run(args: &[&str]) -> std::process::Output {
 // Catches bad input slipping through as a wrong pattern instead of a clear refusal.
 #[test]
 fn bad_heights_fail_with_exit_2() {
-    for args in [&[][..], &["cat"], &["0"], &["-5"]] {
+    for args in [&[][..], &["cat"], &["0"], &["-5"], &["nan"], &["inf"]] {
         let out = run(args);
         assert_eq!(out.status.code(), Some(2), "args {args:?}");
         assert!(out.stdout.is_empty(), "args {args:?}");
