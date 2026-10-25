@@ -12,6 +12,8 @@ Add `in` for inches or `mm` for millimetres: `cargo run -- 12in`, `cargo run -- 
 
 Change the seam allowance (default 1 cm) with `--seam`: `cargo run -- 30 --seam 1.5`.
 
+Make a rectangle pillow with `--width`: `cargo run -- 30 --width 40`.
+
 A height that is missing, not a number, zero or negative stops with a usage message and exit code 2.
 
 ## Tests
