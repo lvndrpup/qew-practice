@@ -1,2 +1,6 @@
 [ledger]
 path = "../qew-practice-ledger"
+
+[[mirror]]
+forge = "github"
+repo = "https://github.com/lvndrpup/qew-practice"
