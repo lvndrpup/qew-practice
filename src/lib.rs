@@ -1,5 +1,7 @@
 const CM_PER_INCH: f64 = 2.54;
 // Polyester fibrefill packed for a soft pillow.
+/// Width of a common fabric bolt.
+pub const BOLT_WIDTH_CM: f64 = 110.0;
 const STUFFING_G_PER_CM3: f64 = 0.02;
 
 /// Converts centimetres to inches.
@@ -44,6 +46,12 @@ pub fn stuffing_grams(height_cm: f64) -> f64 {
     (height_cm.powi(3) / 4.0 * STUFFING_G_PER_CM3).round()
 }
 
+/// Metres to buy of [`BOLT_WIDTH_CM`] fabric for a `width_cm` by `length_cm` cut; `None` if too wide.
+pub fn fabric_metres(width_cm: f64, length_cm: f64) -> Option<f64> {
+    // Rounds up to the next whole cm: rounding down would leave the maker short.
+    (width_cm <= BOLT_WIDTH_CM).then(|| length_cm.ceil() / 100.0)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -70,5 +78,13 @@ mod tests {
     #[test]
     fn thirty_cm_square_needs_135_g() {
         assert_eq!(stuffing_grams(30.0), 135.0);
+    }
+
+    // Catches buying too little fabric, or a cut wider than the bolt.
+    #[test]
+    fn fabric_metres_rounds_up_and_refuses_too_wide() {
+        assert_eq!(fabric_metres(32.0, 64.0), Some(0.64));
+        assert_eq!(fabric_metres(32.0, 64.01), Some(0.65));
+        assert_eq!(fabric_metres(122.0, 64.0), None);
     }
 }

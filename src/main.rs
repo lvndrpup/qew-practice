@@ -1,6 +1,9 @@
 use std::process::ExitCode;
 
-use plush::{cm_to_inch, cutting_radius, parse_height_cm, pillow_fabric, positive, stuffing_grams};
+use plush::{
+    BOLT_WIDTH_CM, cm_to_inch, cutting_radius, fabric_metres, parse_height_cm, pillow_fabric,
+    positive, stuffing_grams,
+};
 
 const USAGE: &str = "usage: plush HEIGHT_CM [--width CM | --round] [--seam CM] (a number above 0; add `in` or `mm`, like 12in or 300mm)";
 const EXAMPLE: &str = "example: plush 30";
@@ -28,6 +31,13 @@ fn main() -> ExitCode {
     let (width, length) = pillow_fabric(o.height_cm, pillow_width, o.seam_cm);
     println!("{} cm = {:.2} in", cm(o.height_cm), cm_to_inch(o.height_cm));
     println!("Pillow fabric: {} x {} cm", cm(width), cm(length));
+    match fabric_metres(width, length) {
+        Some(m) => println!("Buy: {m:.2} m of {BOLT_WIDTH_CM} cm wide fabric"),
+        None => println!(
+            "Buy: too wide for {BOLT_WIDTH_CM} cm fabric (needs {} cm)",
+            cm(width)
+        ),
+    }
     if !o.round && o.width_cm.is_none() {
         println!("Stuffing: about {} g", stuffing_grams(o.height_cm));
     }
