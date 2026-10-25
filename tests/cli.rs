@@ -31,3 +31,15 @@ fn bad_heights_fail_with_exit_2() {
         assert!(!out.stderr.is_empty(), "args {args:?}");
     }
 }
+
+// Catches --help being treated as a bad height.
+#[test]
+fn help_prints_usage_and_example() {
+    for flag in ["--help", "-h"] {
+        let out = run(&[flag]);
+        assert_eq!(out.status.code(), Some(0), "{flag}");
+        let text = String::from_utf8(out.stdout).unwrap();
+        assert!(text.starts_with("usage: plush HEIGHT_CM"), "{flag}: {text}");
+        assert!(text.contains("plush 30"), "{flag}: {text}");
+    }
+}
